@@ -24,8 +24,7 @@ public class RucksackReorganization {
 
                 first.retainAll(second);
 
-                for (Character c : first)
-                    sum += priority(c);
+                sum += priority(first.iterator().next());
             }
             return sum;
         }
