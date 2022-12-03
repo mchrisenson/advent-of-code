@@ -11,41 +11,60 @@ import java.util.List;
  */
 public class RockPaperScissors {
 
-    /** rows: [A, B, C] cols: [X, Y, Z] */
-    static int[][] outcome = new int[][]{{3, 6, 0}, {0, 3, 6}, {6, 0, 3}};
-    /** rows: [A, B, C] cols: [X, Y, Z] */
-    static int[][] opponent = new int[][]{{3, 1, 2}, {1, 2, 3}, {2, 3, 1}};
-
-
     static class PartOne {
-        static int score(List<char[]> rounds) {
-            return rounds.stream()
-                    .mapToInt(r -> outcome[r[0] - 'A'][r[1] - 'X'] + (r[1] - 'W'))
-                    .reduce(0, Integer::sum);
+        static int score(List<String> rounds) {
+            int score = 0;
+            for (String round : rounds) {
+                score += switch (round) {
+                    case "A Z", "B X", "C Y":
+                        yield 0;
+                    case "A X", "B Y", "C Z":
+                        yield 3;
+                    case "A Y", "B Z", "C X":
+                        yield 6;
+                    default:
+                        throw new IllegalArgumentException("Invalid input: " + round);
+                };
+                score += round.charAt(2) - 'W';
+            }
+            return score;
         }
     }
 
     static class PartTwo {
-        static int score(List<char[]> rounds) {
-            return rounds.stream()
-                    .mapToInt(r -> opponent[r[0] - 'A'][r[1] - 'X'] + ((r[1]) - 'X') * 3)
-                    .reduce(0, Integer::sum);
+        static int score(List<String> rounds) {
+            int score = 0;
+            for (String round : rounds) {
+                score += switch (round) {
+                    case "A Y", "B X", "C Z":
+                        yield 1;
+                    case "A Z", "B Y", "C X":
+                        yield 2;
+                    case "A X", "B Z", "C Y":
+                        yield 3;
+                    default:
+                        throw new IllegalArgumentException("Invalid input: " + round);
+                };
+                score += (round.charAt(2) - 'X') * 3;
+            }
+            return score;
         }
     }
 
-    static List<char[]> preprocess(String file) throws IOException {
-        List<char[]> lists = new ArrayList<>();
+
+    static List<String> preprocess(String file) throws IOException {
+        List<String> lists = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null)
-                lists.add(new char[]{line.charAt(0), line.charAt(2)});
+                lists.add(line);
         }
         return lists;
     }
 
     public static void main(String[] args) throws IOException {
-        List<char[]> input = preprocess("src/main/resources/_2022/_02/input.txt");
+        List<String> input = preprocess("src/main/resources/_2022/_02/input.txt");
 
         System.out.println(PartOne.score(input));
         System.out.println(PartTwo.score(input));
