@@ -44,10 +44,10 @@ public class NoSpaceLeftOnDevice {
     }
 
     static class File {
-        File parent;
-        String name;
+        final File parent;
+        final String name;
         Integer size;
-        Set<File> children = new HashSet<>();
+        final Set<File> children = new HashSet<>();
 
         File(File parent, String name, Integer size) {
             this.parent = parent;

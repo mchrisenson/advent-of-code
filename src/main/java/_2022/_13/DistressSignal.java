@@ -40,7 +40,7 @@ public class DistressSignal {
     }
 
     @SuppressWarnings("rawtypes")
-    static Comparator<Object> packetComparator = new Comparator<>() {
+    static final Comparator<Object> packetComparator = new Comparator<>() {
         @Override
         public int compare(Object oL, Object oR) {
             if (oL instanceof List lList && oR instanceof List rList) {

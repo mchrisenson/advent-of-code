@@ -59,7 +59,7 @@ public class MonkeyInTheMiddle {
         }
     }
 
-    static List<Monkey> monkeys = List.of(
+    static final List<Monkey> monkeys = List.of(
             new Monkey(List.of(80L), 2L, 4, 3) { // 0
                 public long operation(long old) {
                     return old * 5L;
@@ -95,7 +95,7 @@ public class MonkeyInTheMiddle {
             }
     );
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         System.out.println("Part One: " + calculateMonkeyBusiness(monkeys, 20, item -> item / 3L));
 
         monkeys.forEach(Monkey::reset);

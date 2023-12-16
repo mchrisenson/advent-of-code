@@ -54,7 +54,6 @@ public class RopeBridge {
         return count;
     }
 
-    static
     record Move(char dir, int steps) {
     }
 

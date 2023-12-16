@@ -9,7 +9,7 @@ import java.util.*;
  * Advent of Code <a href="https://adventofcode.com/2022/day/12">Day 12: Hill Climbing Algorithm</a>
  */
 public class HillClimbingAlgorithm {
-    static Point[] DIRS = new Point[]{new Point(0, 1), new Point(1, 0), new Point(0, -1), new Point(-1, 0)};
+    static final Point[] DIRS = new Point[]{new Point(0, 1), new Point(1, 0), new Point(0, -1), new Point(-1, 0)};
 
     static int findShortestPath(char[][] grid, Point start, Point end) {
         int rows = grid.length, cols = grid[0].length;
