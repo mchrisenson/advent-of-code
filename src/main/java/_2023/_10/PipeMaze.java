@@ -59,7 +59,7 @@ public class PipeMaze {
 
     public static void main(String[] args) throws IOException {
         List<String> lines = Files.readAllLines(Path.of("src/main/resources/_2023/_10/input.txt"));
-        int rows = grid.length, cols = grid[0].length;
+        int rows = lines.size(), cols = lines.getFirst().length();
         grid = new char[lines.size()][];
         IntStream.range(0, rows).forEach(r -> grid[r] = lines.get(r).toCharArray());
 
