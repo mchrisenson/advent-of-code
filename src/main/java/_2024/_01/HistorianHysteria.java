@@ -8,6 +8,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * <a href="https://adventofcode.com">Advent of Code</a>
+ * <a href="https://adventofcode.com/2024">2024</a>
+ * <a href="https://adventofcode.com/2024/day/1">Day 1: Historian Hysteria</a>
+ */
 public class HistorianHysteria {
     static final String FILE = "src/main/resources/_2024/_01/input.txt";
 

@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * <a href="https://adventofcode.com">Advent of Code</a>
+ * <a href="https://adventofcode.com/2024">2024</a>
+ * <a href="https://adventofcode.com/2024/day/2">Day 2: Red-Nosed Reports</a>
+ */
 public class RedNosedReports {
     static final String FILE = "src/main/resources/_2024/_02/input.txt";
 

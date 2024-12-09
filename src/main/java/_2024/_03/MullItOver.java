@@ -8,6 +8,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * <a href="https://adventofcode.com">Advent of Code</a>
+ * <a href="https://adventofcode.com/2024">2024</a>
+ * <a href="https://adventofcode.com/2024/day/3">Day 3: Mull It Over</a>
+ */
 public class MullItOver {
     static final String FILE = "src/main/resources/_2024/_03/input.txt";
 

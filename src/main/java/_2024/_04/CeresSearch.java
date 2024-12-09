@@ -7,6 +7,11 @@ import java.util.Arrays;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * <a href="https://adventofcode.com">Advent of Code</a>
+ * <a href="https://adventofcode.com/2024">2024</a>
+ * <a href="https://adventofcode.com/2024/day/4">Day 4: Ceres Search</a>
+ */
 public class CeresSearch {
     static final String FILE = "src/main/resources/_2024/_04/input.txt";
 

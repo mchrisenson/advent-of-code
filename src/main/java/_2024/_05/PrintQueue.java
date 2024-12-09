@@ -6,6 +6,11 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.IntStream;
 
+/**
+ * <a href="https://adventofcode.com">Advent of Code</a>
+ * <a href="https://adventofcode.com/2024">2024</a>
+ * <a href="https://adventofcode.com/2024/day/5">Day 5: Print Queue</a>
+ */
 public class PrintQueue {
     static final String FILE = "src/main/resources/_2024/_05/input.txt";
 
