@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -13,59 +15,31 @@ import java.util.stream.IntStream;
  */
 public class DiskFragmenter {
     static final String FILE = "src/main/resources/_2024/_09/input.txt";
-    static final Mem UNAVAILABlE = new Mem(-1, Collections.emptyList());
 
     static List<Integer> input;
     static List<Integer> disk;
-    static List<Mem> files;
-    /* Sets of free memory blocks sorted by disk index. List is indexed by the block sizes the sets contain. */
-    static List<SortedSet<Mem>> frees;
+    static List<Deque<Integer>> files;
+    static List<Deque<Integer>> frees;
 
-    static long part1() {
-        initDisk();
-        for (int l = input.getFirst(), r = disk.size() - 1; l < r; l++) {
-            if (disk.get(l) != 0) continue;
-            while (disk.get(r) == 0) r--;
-            if (l < r) {
-                disk.set(l, disk.get(r));
-                disk.set(r--, 0);
-            }
-        }
-        return IntStream.range(0, disk.size()).mapToLong(pos -> (long) pos * disk.get(pos)).sum();
-    }
-
-    static long part2() {
+    static long defrag(BiFunction<Integer, Integer, Deque<Integer>> malloc) {
         initDisk();
         files = new ArrayList<>();
-        frees = new ArrayList<>();
-        for (int i = 0; i < 10; i++) frees.add(new TreeSet<>(Comparator.comparingInt(Mem::idx)));
+        frees = new LinkedList<>();
 
         for (int i = 1, j = input.getFirst(), size; i < input.size(); i++, j += size) {
             size = input.get(i);
-            if ((i & 1) == 0) files.add(new Mem(j, disk.subList(j, j + size)));
-            else if (size > 0) frees.get(size).add(new Mem(j, disk.subList(j, j + size)));
+            if ((i & 1) == 0) files.add(IntStream.range(j, j + size).boxed().collect(Collectors.toCollection(ArrayDeque::new)));
+            else if (size > 0) frees.add(IntStream.range(j, j + size).boxed().collect(Collectors.toCollection(ArrayDeque::new)));
         }
-        for (Mem file : files.reversed()) {
-            Mem free = malloc(file.blocks.size(), file.idx);
-            if (free.equals(UNAVAILABlE)) continue;
-            Collections.copy(free.blocks, file.blocks);
-            Collections.fill(file.blocks, 0);
+        for (Deque<Integer> file : files.reversed()) {
+            Deque<Integer> free = malloc.apply(file.size(), file.getFirst());
+            while (!free.isEmpty()) {
+                int fileIdx = file.removeLast();
+                disk.set(free.removeFirst(), disk.get(fileIdx));
+                disk.set(fileIdx, 0);
+            }
         }
         return IntStream.range(0, disk.size()).mapToLong(pos -> (long) pos * disk.get(pos)).sum();
-    }
-
-    /* Find the lowest indexed free space block with capacity for 'size' that occurs before 'end'. O(logN * 10) */
-    static Mem malloc(int size, int end) {
-        Optional<Integer> freeSize = IntStream.range(size, frees.size()).filter(s -> !frees.get(s).isEmpty())
-                .filter(s -> frees.get(s).getFirst().idx < end).boxed()
-                .min(Comparator.comparingInt(s -> frees.get(s).getFirst().idx));
-        if (freeSize.isEmpty()) return UNAVAILABlE;
-        Mem freeMem = frees.get(freeSize.get()).removeFirst();
-        if (freeSize.get() - size > 0) { // insert remainder back into frees mapping
-            Mem rem = new Mem(freeMem.idx + size, disk.subList(freeMem.idx + size, freeMem.idx + freeSize.get()));
-            frees.get(freeSize.get() - size).add(rem);
-        }
-        return freeMem;
     }
 
     static void initDisk() {
@@ -81,9 +55,36 @@ public class DiskFragmenter {
         String line = Files.readString(Path.of(FILE));
         input = IntStream.range(0, line.length()).map(i -> line.charAt(i) - '0').boxed().toList();
 
-        System.out.println("Part One: " + part1());
-        System.out.println("Part Two: " + part2());
-    }
+        long answer1 = defrag((size, end) -> {
+            Deque<Integer> result = new ArrayDeque<>(size);
+            for (ListIterator<Deque<Integer>> it = frees.listIterator(); it.hasNext(); ) {
+                Deque<Integer> free = it.next();
+                while (size > 0 && !free.isEmpty()) {
+                    int idx = free.removeFirst();
+                    if (idx > end) return result;
+                    result.addLast(idx);
+                    size--;
+                }
+                if (free.isEmpty()) it.remove();
+                if (size == 0) break;
+            }
+            return result;
+        });
+        System.out.println("Part One: " + answer1);
 
-    record Mem(int idx, List<Integer> blocks) {}
+        long answer2 = defrag((size, end) -> {
+            Deque<Integer> result = new ArrayDeque<>(size);
+            for (ListIterator<Deque<Integer>> it = frees.listIterator(); it.hasNext(); ) {
+                Deque<Integer> free = it.next();
+                if (free.getFirst() > end) break;
+                if (free.size() >= size) {
+                    while (size-- > 0) result.add(free.removeFirst());
+                    if (free.isEmpty()) it.remove();
+                    break;
+                }
+            }
+            return result;
+        });
+        System.out.println("Part Two: " + answer2);
+    }
 }
