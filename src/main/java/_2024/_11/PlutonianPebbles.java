@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Stream;
+import java.util.stream.LongStream;
 
 /**
  * <a href="https://adventofcode.com">Advent of Code</a>
@@ -20,12 +20,12 @@ public class PlutonianPebbles {
         if (bs.blinks == 0) return 1;
         if (cache.containsKey(bs)) return cache.get(bs);
         long stone;
-        String digits;
+        double digits;
         if (bs.stone == 0L) {
             stone = count(new BS(bs.blinks - 1, 1L));
-        } else if ((digits = Long.valueOf(bs.stone).toString()).length() % 2 == 0) {
-            stone = Stream.of(digits.substring(0, digits.length() / 2), digits.substring(digits.length() / 2))
-                    .map(Long::valueOf).mapToLong(s -> count(new BS(bs.blinks - 1, s))).sum();
+        } else if ((digits = Math.floor(Math.log10(bs.stone)) + 1d) % 2d == 0d) { // if number of digits is even then split
+            stone = LongStream.of(bs.stone / (long) Math.pow(10d, digits / 2d), bs.stone % (long) Math.pow(10d, digits / 2d))
+                    .map(s -> count(new BS(bs.blinks - 1, s))).sum();
         } else {
             stone = count(new BS(bs.blinks - 1, bs.stone * 2024L));
         }
