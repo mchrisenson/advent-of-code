@@ -12,46 +12,45 @@ import java.util.*;
  */
 public class GardenGroups {
     static final String FILE = "src/main/resources/_2024/_12/input.txt";
-    static Map<Character, Plot> DIRS = Map.of('R', new Plot(0, 1), 'D', new Plot(1, 0), 'L', new Plot(0, -1), 'U', new Plot(-1, 0));
+    static Map<Character, Plot> SIDES = Map.of('R', new Plot(0, 1), 'D', new Plot(1, 0), 'L', new Plot(0, -1), 'U', new Plot(-1, 0));
     static Map<Plot, Character> grid = new HashMap<>();
 
     static Map<Plot, Set<Character>> findRegion(Plot curr, Set<Plot> visited, Map<Plot, Set<Character>> region) {
         if (!visited.add(curr)) return region;
-        region.put(curr, Collections.emptySet());
-        Set<Character> sides = new HashSet<>(DIRS.keySet());
-        for (var dir : DIRS.entrySet()) {
-            Plot next = curr.next(dir.getValue());
+        region.put(curr, new HashSet<>(SIDES.keySet()));
+        for (char side : SIDES.keySet()) {
+            Plot next = curr.next(SIDES.get(side));
             if (!grid.containsKey(next) || !grid.get(next).equals(grid.get(curr))) continue;
-            sides.remove(dir.getKey());
+            region.get(curr).remove(side);
             findRegion(next, visited, region);
         }
-        region.put(curr, sides);
         return region;
     }
 
     static int countSides(Map<Plot, Set<Character>> region) {
         Map<Character, Map<Integer, SortedSet<Integer>>> intervals = new HashMap<>();
-        int sides = 0;
+        int count = 0;
         for (Plot p : region.keySet()) {
-            for (char dir : region.get(p)) {
-                switch (dir) {
+            for (char side : region.get(p)) {
+                switch (side) {
                     case 'U', 'D' ->
-                            intervals.computeIfAbsent(dir, k -> new HashMap<>()).computeIfAbsent(p.r, k -> new TreeSet<>()).add(p.c);
+                            intervals.computeIfAbsent(side, k -> new HashMap<>()).computeIfAbsent(p.r, k -> new TreeSet<>()).add(p.c);
                     case 'L', 'R' ->
-                            intervals.computeIfAbsent(dir, k -> new HashMap<>()).computeIfAbsent(p.c, k -> new TreeSet<>()).add(p.r);
+                            intervals.computeIfAbsent(side, k -> new HashMap<>()).computeIfAbsent(p.c, k -> new TreeSet<>()).add(p.r);
                 }
             }
         }
-        for (char dir : intervals.keySet()) {
-            for (int rc : intervals.get(dir).keySet()) {
+        // For example: a grouping of plots with the same 'U' side in the same row 1 with column numbers 1,2,4,5,6,8,9 would make 3 sides since there are two gaps
+        for (char side : intervals.keySet()) {
+            for (int rc : intervals.get(side).keySet()) {
                 int prev = -1;
-                for (int cr : intervals.get(dir).get(rc)) {
-                    if (prev == -1 || cr > prev + 1) sides++;
+                for (int cr : intervals.get(side).get(rc)) {
+                    if (prev == -1 || cr > prev + 1) count++;
                     prev = cr;
                 }
             }
         }
-        return sides;
+        return count;
     }
 
     public static void main(String[] args) throws IOException {
