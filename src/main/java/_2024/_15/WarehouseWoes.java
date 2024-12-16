@@ -46,10 +46,19 @@ public class WarehouseWoes {
 
     static Pos shift(Pos curr, char move) {
         Pos next = curr.next(DIRS.get(move));
-        char d = grid.get(next);
-        if (d != '.') shift(next, move); // 'O', '[', ']'
-        if (d == '[' && (move == '^' || move == 'v')) shift(next.next(DIRS.get('>')), move);
-        else if (d == ']' && (move == '^' || move == 'v')) shift(next.next(DIRS.get('<')), move);
+        switch (grid.get(next)) {
+            case 'O' -> shift(next, move);
+            case '[' -> {
+                if (move == '^' || move == 'v') shift(next.next(DIRS.get('>')), move);
+                shift(next, move);
+            }
+            case ']' -> {
+                if (move == '^' || move == 'v') shift(next.next(DIRS.get('<')), move);
+                shift(next, move);
+            }
+            case '#' -> throw new RuntimeException(String.format("Hit a wall at %s", next));
+            default -> {} // '.'
+        }
         grid.put(next, grid.put(curr, '.'));
         return next;
     }
