@@ -36,11 +36,6 @@ public class RAMRun {
                 dist.put(v.p, v.dist);
                 pq.offer(v);
             }
-            DIRS.stream().map(u.p::next).filter(grid::contains).map(p -> new QE(p, u.dist + 1))
-                    .filter(v -> v.dist < dist.getOrDefault(v.p, Integer.MAX_VALUE)).forEach(v -> {
-                        dist.put(v.p, v.dist);
-                        pq.offer(v);
-                    });
         }
         return Integer.MAX_VALUE;
     }
